@@ -3,7 +3,7 @@
 - 따라서 기본 toString 메서드를 '재정의(override)'하여 '간결하면서도 사람이 읽기 쉬운 형태의 유의미한 정보'를 반환하도록 해야 한다!
 - 어떤 포맷으로 이러한 문자열로 리턴하는지 Java Docs으로 정리해두는 것이 좋다.(문서화)
 - '정적 팩토리 메서드'를 만들면, 사용자가 입력한 문자열을 기반으로 객체를 생성할 수 있다.
-  ```
+  ```java
   public final class PhoneNumber {
   
     private final short areaCode, prefix, lineNum;
