@@ -7,6 +7,16 @@
 ## 2. 좋은 해시 함수란 
 - 서로 다른 인스턴스에 다른 해시코드를 반환하는 해시 함수
 - 서로 다른 인스턴스들은 `32비트 정수 범위`에 균일하게 분배한다.
+  - 32비트(=4바이트) 정수 범위
+    - 메모리에서 데이터를 표현할 때 32개의 비트를 사용하는 정수 형식
+    - 32비트 정수로 표현할 수 있는 값의 총 개수 : 2^32 = 4,294,967,296 (약 43억)
+    - 범위
+      - 부호가 있는 정수(signed integer) : -2,147,483,648 ~ 2,147,483,647
+      - 부호가 없는 정수(unsigned integer) : 0 ~ 4,294,967,295
+    - 해시 함수에서의 '32비트 정수 범위'
+      - 좋은 해시 함수는 서로 다른 입력 값(인스턴스)들이 해시 값을 계산할 때, 가능한 한 고르게 전체 범위에 분포하도록 설계되어야 함!
+      - '균일하게 분배한다'는 것은 입력 값들이 서로 달라도 결과로 나오는 해시 값이 32비트 정수 범위 내에서 특정 부분에 치우치지 않고 고르게 분포해야 한다는 의미
+      - 해시 함수가 이 범위를 고르게 사용하지 못하면, 특정 값에 해시 값이 몰리게 되어 충돌이 자주 발생할 수 있음!
 
 ## 3. Objects 클래스의 hash()
 - 임의의 개수만큼 객체를 받아 해시코드를 계산해주는 정적 메서드
@@ -26,6 +36,25 @@
 2. 두 번째 필드를 선택해서 '그 값에 해당하는 Primitive Type의 hashCode() 메서드로 구한 해시코드 값'과 '1에서 구한 값에 31을 곱한 값'을 더한다.
 3. 세 번째 필드를 선택해서 '그 값에 해당하는 Primitive Type의 hashCode() 메서드로 구한 해시코드 값'과 '2에서 구한 값에 31을 곱한 값'을 더한다.
 4. 모든 유효한 필드들에 대해서 위의 과정을 반복 수행한다.
+    ```java
+    // PublicMethods.java
+   @Override
+    public int hashCode() {
+        return System.identityHashCode(name) + // guaranteed interned String
+               31 * Arrays.hashCode(ptypes);
+    }
+   
+   // StackTraceElement.java
+   public int hashCode() {
+        int result = 31*declaringClass.hashCode() + methodName.hashCode();
+        result = 31*result + Objects.hashCode(classLoaderName);
+        result = 31*result + Objects.hashCode(moduleName);
+        result = 31*result + Objects.hashCode(moduleVersion);
+        result = 31*result + Objects.hashCode(fileName);
+        result = 31*result + lineNumber;
+        return result;
+    }
+    ```
 
 ### 31을 사용하는 이유
 - '홀수'이기 때문 -> '짝수'는 연산 과정을 반복하다 보면 0이 생기면서 32비트 정수 범위에서 숫자가 한쪽으로 치우칠 경향이 있다.
